@@ -52,7 +52,7 @@ function utf8_validator.validate(str)
   return true
 end
 
--- Accept range for second byte of utf8
+-- Accept range for left byte of utf8
 local accept_range = {
   {lo = 0x80, hi = 0xBF},
   {lo = 0xA0, hi = 0xBF},
@@ -85,17 +85,17 @@ function utf8_validator.validate2(str)
           range_idx = 5
         end
       else
-        return false
+        return false, i
       end
 
-      if i + left_size  > n then
-        return false
+      if i + left_size > n then
+        return false, i
       end
 
       for j = 1, left_size do
-        byte = string.byte(str, i + j, i + j)
+        byte = string.byte(str, i + j)
         if byte < accept_range[range_idx].lo or byte > accept_range[range_idx].hi then
-          return false
+          return false, i
         end
         range_idx = 1
       end
